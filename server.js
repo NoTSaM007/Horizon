@@ -6,22 +6,29 @@ const client = new discord.Client({
 const { readdirSync } = require("fs");
 const { join } = require("path");
 const { TOKEN, PREFIX } = require("./config.json");
+const ascii = require("ascii-table");
+const { Cilent, Collection } = require("discord.js");
+const table = new ascii("Commands");
+const db = require("quick.db");
 
-//CLIENT EVENTS
 client.on("ready", () => {
-  console.log("Ready to play song | Bot created by SAM");
-  client.user.setActivity("+help | Horizon - A Cᴏᴏʟ Mᴜʟᴛɪ-ᴘᴜʀᴘᴏsᴇ Bᴏᴛ.");
+  console.log("Ready To Work. | Bot created by SAM");
+  client.user.setActivity("+help | Horizon - A Cᴏᴏʟ Mᴜʟᴛɪ-Pᴜʀᴘᴏsᴇ Bᴏᴛ.", {
+    type: "STREAMING"
+  });
 });
 
 client.on("warn", info => console.log(info));
 
 client.on("error", console.error);
-
 //DEFINIING
 client.commands = new discord.Collection();
+client.aliases = new discord.Collection();
 client.prefix = PREFIX;
 client.queue = new Map();
 client.vote = new Map();
+client.afk = new Map();
+client.snipes = new Map();
 client.capitalize = string => {
   let str = "";
   string = string.split(" ");
@@ -43,73 +50,102 @@ client.capitalize = string => {
   }
 };
 
-//LETS LOAD ALL FILES
-const cmdFiles = readdirSync(join(__dirname, "commands")).filter(file =>
-  file.endsWith(".js")
-);
-for (const file of cmdFiles) {
-  const command = require(join(__dirname, "commands", file));
-  client.commands.set(command.name, command);
-} //LOADING DONE
+require("./handlers/command.js")(client);
 
 //WHEN SOMEONE MESSAGE
-client.on("message", message => {
+client.on("message", async message => {
   if (message.author.bot) return;
   if (!message.guild) return;
 
-  if (message.content.startsWith(PREFIX)) {
+  let prefix = await db.fetch(`prefixes_${message.guild.id}`);
+  if (!prefix) prefix = PREFIX;
+
+  if (
+    message.content === "<@742375154654380082>" ||
+    message.content === `<@!${client.user.id}>`
+  ) {
+    const embed = new discord.MessageEmbed()
+      .setColor("00FFFF")
+      .setDescription(
+        `**Hey, ${message.author}! My Prefix is \`${prefix}\` For This Guild!**`
+      )
+      .setFooter(`Use \`${prefix}help\` For Commands!`);
+    message.channel.send(embed);
+  }
+
+  client.on("messageDelete", function(message, channel) {
+    client.snipes.set(message.channel.id, {
+      content: message.content,
+      author: message.author.tag,
+      image: message.attachments.first()
+        ? message.attachments.first().proxyURL
+        : null
+    });
+  });
+
+  let blacklist = await db.fetch(`blacklist_${message.author.id}`);
+
+  if (message.author.bot) return;
+  if (!message.guild) return;
+  if (!message.content.startsWith(prefix)) return;
+
+  if (blacklist === "Blacklisted")
+    return message.channel.send(
+      `${message.author} You are blacklisted from the bot!`
+    );
+
+  if (message.content.startsWith(prefix)) {
     //IF MESSSAGE STARTS WITH MINE BOT PREFIX
 
     const args = message.content
-      .slice(PREFIX.length)
+      .slice(prefix.length)
       .trim()
       .split(/ +/); //removing prefix from args
     const command = args.shift().toLowerCase();
 
-    if (!client.commands.has(command)) {
+    let cmd =
+      client.commands.get(command) ||
+      client.commands.get(client.aliases.get(command));
+    if (!cmd) {
       return;
     }
 
     try {
-      //TRY TO GET COMMAND AND EXECUTE
-      client.commands.get(command).execute(client, message, args);
+      cmd.execute(client, message, args);
+
       //COMMAND LOGS
-      console.log(
-        `${message.guild.name}: ${message.author.tag} Used ${
-          client.commands.get(command).name
-        } in #${message.channel.name}`
-      );
+      const o = client.channels.cache.get("748919962235568330");
+      const embed = new discord.MessageEmbed()
+        .setTitle("Cᴏᴍᴍᴀɴᴅ Lᴏɢ.")
+        .setDescription(
+          `Gᴜɪʟᴅ: **\`${message.guild.name}\`**
+Cʜᴀɴɴᴇʟ: **\`${message.channel.name}\`**
+Exᴇᴄᴜᴛᴏʀ: **${message.author.tag}** 
+Cᴏᴍᴍᴀɴᴅ Usᴇᴅ: **\`${command}\`**`
+        )
+        .setColor("00FFFF")
+        .setThumbnail(message.author.avatarURL())
+        .setTimestamp();
+      o.send(embed);
     } catch (err) {
-      //IF IT CATCH ERROR
+      //IF IT CATCHES ERROR
+
       console.log(err);
-      message.reply("Gᴇᴛᴛɪɴɢ Eʀʀᴏʀ `${error}`");
+      const o = client.channels.cache.get("749268670609621122");
+      const embed = new discord.MessageEmbed()
+        .setTitle("Cᴏᴍᴍᴀɴᴅ Eʀʀᴏʀ.")
+        .setDescription(
+          `Gᴜɪʟᴅ: **\`${message.guild.name}\`**
+Cʜᴀɴɴᴇʟ: **\`${message.channel.name}\`**
+Cᴏᴍᴍᴀɴᴅ Nᴀᴍᴇ: **\`${command}\`**
+Eʀʀᴏʀ: ${err}`
+        )
+        .setColor("00FFFF")
+        .setThumbnail(message.author.avatarURL())
+        .setTimestamp();
+      o.send(embed);
     }
   }
-});
-
-client.on("message", async message => {
-  if (message.author.bot) return;
-  if (!message.guild) return;
-  if (!message.content.startsWith(PREFIX)) return;
-
-  if (!message.member)
-    message.member = await message.guild.fetchMember(message);
-
-  const args = message.content
-    .slice(PREFIX.length)
-    .trim()
-    .split(/ +/g);
-  const cmd = args.shift().toLowerCase();
-
-  if (cmd.length === 0) return;
-
-  // Get the command
-  let command = client.commands.get(cmd);
-  // If none is found, try to find it by alias
-  if (!command) command = client.commands.get(client.aliases.get(cmd));
-
-  // If a command is finally found, run the command
-  if (command) command.run(client, message, args);
 });
 
 //DONT DO ANYTHING WITH THIS TOKEN lol

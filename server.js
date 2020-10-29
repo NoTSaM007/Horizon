@@ -5,7 +5,8 @@ const client = new discord.Client({
 });
 const { readdirSync } = require("fs");
 const { join } = require("path");
-const { TOKEN, PREFIX } = require("./config.json");
+const { PREFIX } = require("./config.json");
+const TOKEN = process.env.TOKEN
 const ascii = require("ascii-table");
 const { Cilent, Collection } = require("discord.js");
 const table = new ascii("Commands");
@@ -77,6 +78,7 @@ client.on("message", async message => {
     client.snipes.set(message.channel.id, {
       content: message.content,
       author: message.author.tag,
+
       image: message.attachments.first()
         ? message.attachments.first().proxyURL
         : null

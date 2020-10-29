@@ -22,20 +22,39 @@ module.exports = {
       "**100%**|| :heart::heart::heart::heart::heart::heart::heart::heart::heart::heart: ||**100%**"
     ];
 
-    var user1 = message.mentions.members.first() || message.author;
-    var user2 = message.mentions.members.last();
-    
+    let user1 =
+      message.mentions.members.first() ||
+      message.guild.members.cache.get(args[0]) ||
+      message.guild.members.cache.find(
+        r =>
+          r.user.username.toLowerCase() === args[0].toLocaleLowerCase() ||
+          message.member
+      ) ||
+      message.guild.members.cache.find(
+        r => r.displayName === args[0].toLocaleLowerCase()
+      );
+
+    let user2 =
+      message.mentions.members.first(2)[1] ||
+      message.guild.members.cache.get(args[1]) ||
+      message.guild.members.cache.find(
+        r => r.user.username.toLowerCase() === args[1].toLocaleLowerCase()
+      ) ||
+      message.guild.members.cache.find(
+        r => r.displayName === args[1].toLocaleLowerCase()
+      );
+
     if (!user2) {
-      message.reply("Please mention The Users");
+      message.reply("Please mention The 2nd User");
       return;
     }
     /*
                         if(!user) return message.channel.send("Can't find user!");
                         if(!user2) return message.channel.send("Can't find user!");
                         */
-    var athor = message.member.nickname;
-    var author = message.member.nickname;
-    var embed = new Discord.MessageEmbed()
+    let athor = message.member.nickname;
+    let author = message.member.nickname;
+    let embed = new Discord.MessageEmbed()
       .setThumbnail(
         "https://media.discordapp.net/attachments/427168044528173056/436659295598280725/meterheart.png?width=344&height=344"
       )

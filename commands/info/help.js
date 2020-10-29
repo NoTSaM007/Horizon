@@ -81,7 +81,7 @@ module.exports = {
           }. | Tᴏᴛᴀʟ Cᴏᴍᴍᴀɴᴅs:** ` + `**[${client.commands.size}]**`
         )
         .addField(
-          `<:info:758010882570846239> **| Iɴғᴏ - [${
+          `<:info:770703029183840266> **| Iɴғᴏ - [${
             client.commands.filter(cmd => cmd.category === "Info").size
           }]**`,
           "``" + prefix + info.join("``, " + "``" + prefix) + "``",

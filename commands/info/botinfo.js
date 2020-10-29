@@ -1,6 +1,8 @@
 require("moment-duration-format");
 const { version, MessageEmbed } = require("discord.js");
 const moment = require("moment");
+const db = require("quick.db");
+const PREFIX = require("../../config.json");
 
 module.exports = {
   name: "botinfo",
@@ -13,6 +15,8 @@ module.exports = {
       .format(" D [days], H [hrs], m [mins], s [secs]");
     const nodev = process.version;
     const createdAt = moment(bot.user.createdAt).format("MM/DD/YYYY");
+    let prefix = db.fetch(`prefixes_${message.guild.id}`);
+    if (!prefix) prefix = PREFIX;
 
     const embed = new MessageEmbed()
       .setColor("BLUE")
@@ -25,12 +29,14 @@ module.exports = {
         `
 **Status:** ${bot.user.presence.status}
 **Users:** ${bot.users.cache.size}
-**Servers:** ${bot.guilds.cache.size}
+**Guilds:** ${bot.guilds.cache.size}
 **Channels:** ${bot.channels.cache.size}
 **Created on:** ${createdAt}
 **Command Count:** ${bot.commands.size}
 **Voice connections:** ${bot.voice.connections.size}
-            `
+
+
+`
       )
       .addField(
         "__**System Info**__",

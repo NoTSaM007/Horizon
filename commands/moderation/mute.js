@@ -8,14 +8,14 @@ module.exports = {
   category: "Moderation",
   execute: async (client, message, args) => {
     try {
-      if (!message.member.hasPermission("MANAGE&"))
+      if (!message.member.hasPermission("MANAGE_ROLES"))
         return message.channel.send(
-          "**You Dont Have Permmissions To Mute Someone! - [MANAGE_GUILD]**"
+          "**You Dont Have Permmissions To Mute Someone! - [MANAGE_ROLES]**"
         );
 
       if (!message.guild.me.hasPermission("MANAGE_ROLES"))
         return message.channel.send(
-          "**I Don't Have Permissions To Mute Someone! - [MANAGE_GUILD]**"
+          "**I Don't Have Permissions To Mute Someone! - [MANAGE_ROLES]**"
         );
       if (!args[0])
         return message.channel.send("**Please Enter A User To Be Muted!**");

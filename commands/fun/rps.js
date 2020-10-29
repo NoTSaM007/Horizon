@@ -6,9 +6,9 @@ module.exports = {
   name: "rps",
   usage: "rps <rock | paper | scissors>",
   description: "Play a game of rock–paper–scissors!",
-  category: "Fun",
+  category: "Games",
 
-  execute: async (client, message, args) => {
+execute: async (client, message, args) => {
     let userChoice;
     if (args.length) userChoice = args[0].toLowerCase();
     if (!rps.includes(userChoice))

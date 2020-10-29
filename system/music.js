@@ -54,6 +54,9 @@ module.exports = {
         message.client.user.displayAvatarURL()
       )
       .setDescription(`**[${song.title}](${song.url})**`)
+      .setImage(song.thumbnail)
+      .setThumbnail(message.author.displayAvatarURL())
+
       .setFooter(`Requested By: ${message.author.tag}`);
     queue.textChannel
       .send(embed)

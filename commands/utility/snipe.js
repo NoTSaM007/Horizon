@@ -22,6 +22,7 @@ module.exports = {
     const embed = new Discord.MessageEmbed()
       .setAuthor(msg.author)
       .setDescription(msg.content)
+      
       .setTimestamp();
     if (msg.image) embed.setImage(msg.image);
 

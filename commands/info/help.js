@@ -11,7 +11,6 @@ module.exports = {
   category: "Info",
   execute(client, message, args) {
     let info = [];
-    let music = [];
     let utility = [];
     let fun = [];
     let action = [];
@@ -65,9 +64,6 @@ module.exports = {
         .filter(cmd => cmd.category === "Moderation")
         .forEach(cmd => moderation.push(cmd.name));
       client.commands
-        .filter(cmd => cmd.category === "Music")
-        .forEach(cmd => music.push(cmd.name));
-      client.commands
         .filter(cmd => cmd.category === "Utility")
         .forEach(cmd => utility.push(cmd.name));
 
@@ -84,56 +80,49 @@ module.exports = {
           `<:info:770703029183840266> **| Iɴғᴏ - [${
             client.commands.filter(cmd => cmd.category === "Info").size
           }]**`,
-          "``" + prefix + info.join("``, " + "``" + prefix) + "``",
+          "` " + prefix + info.join("``, " + "``" + prefix) + "`",
           true
         )
         .addField(
           `<:02Blush:754195456342491186> **| Aᴄᴛɪᴏɴ - [${
             client.commands.filter(cmd => cmd.category === "Action").size
           }]**`,
-          "``" + prefix + action.join("``, " + "``" + prefix) + "``",
+          "` " + prefix + action.join("``, " + "``" + prefix) + "`",
           true
         )
         .addField(
           `<a:PIKACHU:758042888000110644> **| Fᴜɴ - [${
             client.commands.filter(cmd => cmd.category === "Fun").size
           }]**`,
-          "``" + prefix + fun.join("``, " + "``" + prefix) + "``",
+          "` " + prefix + fun.join("``, " + "``" + prefix) + "`",
           true
         )
         .addField(
           `🎮 **| Gᴀᴍᴇꜱ - [${
             client.commands.filter(cmd => cmd.category === "Games").size
           }]**`,
-          "``" + prefix + games.join("``, " + "``" + prefix) + "``",
+          "` " + prefix + games.join("``, " + "``" + prefix) + "`",
           true
         )
         .addField(
           `<:CaMeRa:759137784039473222> **| Iᴍᴀɢᴇ - [${
             client.commands.filter(cmd => cmd.category === "Image").size
           }]**`,
-          "``" + prefix + image.join("``, " + "``" + prefix) + "``",
+          "` " + prefix + image.join("``, " + "``" + prefix) + "`",
           true
         )
         .addField(
           `<a:MOD:758014286386692166> **| Mᴏᴅᴇʀᴀᴛɪᴏɴ - [${
             client.commands.filter(cmd => cmd.category === "Moderation").size
           }]**`,
-          "``" + prefix + moderation.join("``, " + "``" + prefix) + "``",
+          "` " + prefix + moderation.join("``, " + "``" + prefix) + "`",
           true
         )
-        .addField(
-          `<a:MUSIC:758015236254072922> **| Mᴜꜱɪᴄ - [${
-            client.commands.filter(cmd => cmd.category === "Music").size
-          }]**`,
-          "``" + prefix + music.join("``, " + "``" + prefix) + "``",
-          true
-        )
-        .addField(
-          `<a:LOADING:758016164348690543> **| Uᴛɪʟɪᴛʏ - [${
+addField
+(          `<a:LOADING:758016164348690543> **| Uᴛɪʟɪᴛʏ - [${
             client.commands.filter(cmd => cmd.category === "Utility").size
           }]**`,
-          "``" + prefix + utility.join("``," + "``" + prefix) + "``",
+          "``  + prefix + utility.join("``," + "``" + prefix) + "``,
           true
         );
       message.channel.send(embed);
